@@ -1,0 +1,156 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                    GUIDE D'UTILISATION - GÉNÉRATEUR CV/LM                      ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════
+📋 1. RÉPONDRE À UNE ANNONCE DE POSTE
+═══════════════════════════════════════════════════════════════════════════════
+
+Usage:
+  ./lancer_generateur.sh <URL_ANNONCE>
+
+Exemple:
+  ./lancer_generateur.sh "https://www.linkedin.com/jobs/view/123456789"
+
+Génère automatiquement:
+  ✓ CV personnalisé (PDF)
+  ✓ Lettre de motivation (PDF)
+  ✓ Topo de préparation d'entretien
+  ✓ 10 questions techniques avec réponses
+  ✓ 5 questions de personnalité (méthode STAR)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🎯 2. CANDIDATURE SPONTANÉE
+═══════════════════════════════════════════════════════════════════════════════
+
+Usage:
+  ./candidature_spontanee.sh <URL_SITE_ENTREPRISE> [POSTE_VISE]
+
+Exemples:
+  ./candidature_spontanee.sh "https://www.anthropic.com"
+  ./candidature_spontanee.sh "https://www.mistral.ai" "Machine Learning Engineer"
+
+Génère la même chose qu'une réponse à annonce, mais adapté pour candidature spontanée.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🔍 3. RECHERCHE AUTOMATIQUE ET GÉNÉRATION EN BATCH
+═══════════════════════════════════════════════════════════════════════════════
+
+Usage:
+  ./rechercher_et_generer.sh ["MOTS-CLES"]
+
+Exemples:
+  ./rechercher_et_generer.sh "Ingénieur IA"
+  ./rechercher_et_generer.sh  (mode interactif)
+
+Fonctionnement:
+  1. Recherche sur LinkedIn, Indeed, Welcome to the Jungle
+  2. Récupère 10+ offres par plateforme
+  3. Analyse la pertinence avec Claude (score /10)
+  4. Affiche les offres triées par pertinence
+  5. Vous sélectionnez celles qui vous intéressent
+     - Tapez les numéros: 1 3 5 7
+     - Ou tapez 'all' pour tout sélectionner
+     - Ou tapez 'top5' pour les 5 meilleures
+  6. Génère automatiquement CV/LM/Préparation pour toutes les offres sélectionnées
+
+
+═══════════════════════════════════════════════════════════════════════════════
+⚙️  4. PERSONNALISATION (fichier config.py)
+═══════════════════════════════════════════════════════════════════════════════
+
+Paramètres modifiables:
+
+🤖 Modèle IA:
+  CLAUDE_MODEL = "claude-sonnet-4-5-20250929"
+
+📄 Template CV:
+  CV_TEMPLATE = "2colonnes"      # ou "classique"
+  CV_FORMAT = "1page"             # ou "2pages"
+
+🔤 Police:
+  FONT_SIZE_BASE = "10pt"
+  BULLET_STYLE = "bullet"         # ou "blacksquare", "checkmark", etc.
+
+🎨 Couleurs:
+  COLORIZE_MISSION_TITLES = True  # Titres missions en bleu
+
+❓ Questions entretien:
+  NB_QUESTIONS_TECHNIQUES = 10
+  NB_QUESTIONS_PERSONNALITE = 5
+
+💬 Prompts IA:
+  Modifiez PROMPT_TEMPLATE_PROFIL, PROMPT_TEMPLATE_LETTRE, etc.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📁 5. STRUCTURE DES DOSSIERS GÉNÉRÉS
+═══════════════════════════════════════════════════════════════════════════════
+
+candidatures/
+└── Poste_Entreprise_20260111_1234/
+    ├── cv.pdf
+    ├── cv.tex
+    ├── lettre_motivation.pdf
+    ├── lettre_motivation.tex
+    ├── preparation_entretien.txt
+    ├── questions_techniques.txt
+    ├── questions_personnalite.txt
+    ├── annonce_originale.txt (ou site_entreprise_original.txt)
+    └── analyse_poste.txt
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🔧 6. DÉPANNAGE
+═══════════════════════════════════════════════════════════════════════════════
+
+Problème: "ANTHROPIC_API_KEY n'est pas définie"
+Solution: Vérifiez votre fichier .env et ajoutez:
+          ANTHROPIC_API_KEY=sk-ant-xxxxx
+
+Problème: "pdflatex not found"
+Solution: Installez MacTeX: brew install --cask mactex
+
+Problème: Erreur de compilation LaTeX
+Solution: Vérifiez les fichiers .log dans le dossier de candidature
+
+Problème: Pas d'offres trouvées dans la recherche
+Solution: 
+  - Vérifiez votre connexion internet
+  - Les sites peuvent bloquer le scraping, essayez avec d'autres mots-clés
+  - Utilisez le mode manuel avec une URL directe
+
+
+═══════════════════════════════════════════════════════════════════════════════
+💡 7. CONSEILS D'UTILISATION
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Mettez à jour infos_statique.txt régulièrement avec vos nouvelles expériences
+✓ Relisez TOUJOURS les documents générés avant de les envoyer
+✓ Adaptez les prompts dans config.py selon vos besoins spécifiques
+✓ Utilisez la recherche automatique pour gagner du temps
+✓ Les questions d'entretien sont là pour vous préparer, pas pour être apprises par cœur
+✓ La candidature spontanée fonctionne mieux avec des entreprises ayant un site détaillé
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📊 8. COÛTS ESTIMÉS (Claude Sonnet 4.5)
+═══════════════════════════════════════════════════════════════════════════════
+
+Par candidature (1 annonce):
+  - Analyse annonce: ~0.01€
+  - Génération profil: ~0.02€
+  - Génération lettre: ~0.03€
+  - Topo entretien: ~0.04€
+  - Questions techniques: ~0.06€
+  - Questions personnalité: ~0.04€
+  TOTAL: ~0.20€ par candidature
+
+Recherche automatique:
+  - Analyse de pertinence de 30 offres: ~0.05€
+  - Génération batch de 5 candidatures: ~1.00€
+  TOTAL: ~1.05€ pour 5 candidatures complètes
+
+Note: Coûts approximatifs, peuvent varier selon la longueur des générations.

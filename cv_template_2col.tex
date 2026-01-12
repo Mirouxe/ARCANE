@@ -1,0 +1,127 @@
+\documentclass[{FONT_SIZE_BASE},a4paper]{article}
+
+% -------------------- PACKAGES --------------------
+\usepackage[margin={CV_MARGINS}]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{amssymb}  % Pour les symboles mathématiques
+\usepackage{pifont}   % Pour les symboles additionnels comme \checkmark
+\usepackage{paracol}  % Pour les colonnes parallèles
+\usepackage{multicol} % Pour les colonnes multiples
+
+% -------------------- COLORS --------------------
+\definecolor{darkblue}{RGB}{20,40,90}
+\definecolor{graytext}{RGB}{80,80,80}
+\definecolor{lightgray}{RGB}{240,240,240}
+
+% -------------------- PARAGRAPH SETTINGS --------------------
+\setlength{\parindent}{0pt}  % Supprime les alinéas
+\setlength{\parskip}{{PARSKIP}}  % Espace entre les paragraphes
+
+% -------------------- SECTION STYLE --------------------
+\titleformat{\section}
+{{FONT_SIZE_SECTION}\bfseries\color{darkblue}}
+{}
+{0em}
+{}
+[\titlerule]
+
+% Style pour les sous-sections (colonne gauche)
+\titleformat{\subsection}
+{\normalsize\bfseries\color{darkblue}}
+{}
+{0em}
+{}
+
+% -------------------- COMMANDS --------------------
+\newcommand{\cvitem}[2]{
+\textbf{#1} \hfill {\small #2}\\
+}
+
+\newcommand{\cvsubitem}[1]{
+\hspace{0.3cm}{BULLET_SYMBOL} #1\\
+}
+
+% Commande pour les items de la colonne gauche
+\newcommand{\leftitem}[2]{
+\textbf{#1:} #2\\[0.1cm]
+}
+
+% Commande pour les compétences groupées
+\newcommand{\skillgroup}[2]{
+\textbf{#1}\\
+{\small #2}\\[0.2cm]
+}
+
+% -------------------- DOCUMENT --------------------
+\begin{document}
+
+% -------------------- HEADER --------------------
+\begin{center}
+{{FONT_SIZE_NAME} \textbf{{NOM}}}\\[0.1cm]
+{{FONT_SIZE_TITLE} \textbf{{TITRE}}}\\[0.05cm]
+\end{center}
+
+\vspace{{HEADER_SPACING}}
+
+% -------------------- DÉBUT DES COLONNES --------------------
+\columnratio{0.25}  % Colonne gauche = 30%, droite = 70%
+\setlength{\columnsep}{1cm}  % Espace entre colonnes
+
+\begin{paracol}{2}
+
+% ============================================================
+% COLONNE GAUCHE (Informations compactes)
+% ============================================================
+
+\subsection*{Contact}
+\leftitem{Localisation}{{LOCALISATION}}
+\leftitem{Email}{\href{mailto:{EMAIL}}{\small {EMAIL}}}
+\leftitem{LinkedIn}{\href{{LINKEDIN}}{\small LinkedIn}}
+\leftitem{Tél}{{TELEPHONE}}
+
+\vspace{0.2cm}
+
+\subsection*{Compétences}
+
+\skillgroup{Scientific AI \& DL}{{COMPETENCES_SCIENTIFIC_AI}}
+
+\skillgroup{Simulation}{{COMPETENCES_SIMULATION}}
+
+\skillgroup{Generative AI}{{COMPETENCES_GENERATIVE_AI}}
+
+\skillgroup{Informatique}{{COMPETENCES_INFORMATIQUE}}
+
+\vspace{0.2cm}
+
+\subsection*{Langues}
+{LANGUES}
+
+\vspace{0.2cm}
+
+\subsection*{Certifications}
+{CERTIFICATIONS}
+
+% ============================================================
+% COLONNE DROITE (Contenu principal)
+% ============================================================
+\switchcolumn
+
+\section*{Profil}
+{PROFIL}
+
+\section*{Expérience}
+{EXPERIENCES}
+
+\section*{Formation}
+{FORMATIONS}
+
+\end{paracol}
+
+\end{document}

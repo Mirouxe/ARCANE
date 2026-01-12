@@ -1,0 +1,96 @@
+\documentclass[{FONT_SIZE_BASE},a4paper]{article}
+
+% -------------------- PACKAGES --------------------
+\usepackage[margin={CV_MARGINS}]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{amssymb}  % Pour les symboles mathématiques
+\usepackage{pifont}   % Pour les symboles additionnels comme \checkmark
+
+% -------------------- COLORS --------------------
+\definecolor{darkblue}{RGB}{20,40,90}
+\definecolor{graytext}{RGB}{80,80,80}
+
+% -------------------- PARAGRAPH SETTINGS --------------------
+\setlength{\parindent}{0pt}  % Supprime les alinéas
+\setlength{\parskip}{{PARSKIP}}  % Espace entre les paragraphes
+
+% -------------------- SECTION STYLE --------------------
+\titleformat{\section}
+{{FONT_SIZE_SECTION}\bfseries\color{darkblue}}
+{}
+{0em}
+{}
+[\titlerule]
+
+% -------------------- COMMANDS --------------------
+\newcommand{\cvitem}[2]{
+\textbf{#1} \hfill {\small #2}\\
+}
+
+\newcommand{\cvsubitem}[1]{
+\hspace{0.5cm}{BULLET_SYMBOL} #1\\
+}
+
+% -------------------- DOCUMENT --------------------
+\begin{document}
+
+% -------------------- HEADER --------------------
+\begin{center}
+{{FONT_SIZE_NAME} \textbf{{NOM}}}\\[0.15cm]
+{{FONT_SIZE_TITLE} \textbf{{TITRE}}}\\[0.1cm]
+{LOCALISATION}\\
+\href{mailto:{EMAIL}}{{EMAIL}} \quad | \quad
+\href{{LINKEDIN}}{{LINKEDIN_TEXT}}
+\end{center}
+
+\vspace{{HEADER_SPACING}}
+
+% -------------------- PROFILE --------------------
+\section*{Profil}
+
+{PROFIL}
+
+% -------------------- EXPERIENCE --------------------
+\section*{Expérience professionnelle}
+
+{EXPERIENCES}
+
+% -------------------- EDUCATION --------------------
+\section*{Formation}
+
+{FORMATIONS}
+
+% -------------------- CERTIFICATIONS --------------------
+\section*{Certifications}
+
+{CERTIFICATIONS}
+
+% -------------------- SKILLS --------------------
+\section*{Compétences}
+
+\textbf{Scientific AI \& Deep Learning :}
+{COMPETENCES_SCIENTIFIC_AI}
+
+\textbf{Simulation \& Physique :}
+{COMPETENCES_SIMULATION}
+
+\textbf{Generative AI \& LLM :}
+{COMPETENCES_GENERATIVE_AI}
+
+\textbf{Informatique \& DevOps :}
+{COMPETENCES_INFORMATIQUE}
+
+% -------------------- LANGUAGES --------------------
+\section*{Langues}
+
+{LANGUES}
+
+\end{document}
+

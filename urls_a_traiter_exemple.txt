@@ -1,0 +1,31 @@
+# FICHIER D'URLs POUR GÉNÉRATION EN BATCH
+# ==========================================
+#
+# Instructions:
+# 1. Copiez ce fichier et renommez-le "urls_a_traiter.txt"
+# 2. Ajoutez vos URLs d'offres (une par ligne)
+# 3. Les lignes commençant par # sont des commentaires
+# 4. Lancez: ./batch_urls.sh
+#
+# Plateformes supportées:
+# - LinkedIn
+# - Indeed
+# - Welcome to the Jungle
+# - Apec
+# - N'importe quel site avec une page d'annonce
+#
+# ==========================================
+
+# Exemple d'URLs (remplacez par les vôtres):
+
+# LinkedIn
+https://www.linkedin.com/jobs/view/4058234306
+
+# Welcome to the Jungle
+https://www.welcometothejungle.com/fr/companies/company-name/jobs/job-slug
+
+# Indeed
+https://fr.indeed.com/viewjob?jk=abc123def456
+
+# Apec
+https://www.apec.fr/candidat/offres-emploi.html?id=123456

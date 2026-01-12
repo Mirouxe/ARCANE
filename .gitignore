@@ -1,0 +1,33 @@
+# Environnement Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Fichiers LaTeX temporaires
+*.aux
+*.log
+*.out
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+
+# Fichiers de configuration sensibles
+.env
+infos_statique.txt
+
+# Données générées / personnelles
+candidatures/
+recherche_postes_*.json
+urls_a_traiter.txt
+poste_recherche.txt
+
+# Cache Playwright
+.ms-playwright/
+
+# Fichiers macOS
+.DS_Store
+
+# Fichiers de test
+test_*.py
