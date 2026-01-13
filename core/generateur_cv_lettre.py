@@ -17,8 +17,13 @@ from anthropic import Anthropic
 from dotenv import load_dotenv
 from dataclasses import dataclass, field
 
+# Déterminer le répertoire racine du projet
+SCRIPT_DIR = Path(__file__).parent.absolute()
+ROOT_DIR = SCRIPT_DIR.parent
+TEMPLATES_DIR = ROOT_DIR / "templates"
+
 # Charger les variables d'environnement depuis .env
-load_dotenv()
+load_dotenv(ROOT_DIR / ".env")
 
 # Importer la configuration centralisée
 from config import *
@@ -718,9 +723,9 @@ class GenerateurLaTeX:
         
         # Choisir le bon template selon la configuration
         if CV_TEMPLATE == "2colonnes":
-            template_file = 'cv_template_2col.tex'
+            template_file = TEMPLATES_DIR / 'cv_template_2col.tex'
         else:
-            template_file = 'cv_template.tex'
+            template_file = TEMPLATES_DIR / 'cv_template.tex'
         
         # Lire le template
         with open(template_file, 'r', encoding='utf-8') as f:
@@ -804,7 +809,8 @@ class GenerateurLaTeX:
         """Génère la lettre de motivation LaTeX"""
         
         # Lire le template
-        with open('lettre_motivation_template.tex', 'r', encoding='utf-8') as f:
+        template_file = TEMPLATES_DIR / 'lettre_motivation_template.tex'
+        with open(template_file, 'r', encoding='utf-8') as f:
             template = f.read()
         
         # Date actuelle
@@ -1125,10 +1131,11 @@ def main():
     entreprise_clean = re.sub(r'[^a-zA-Z0-9]', '_', analyse['entreprise'])[:20]
     
     folder_name = f"{poste_clean}_{entreprise_clean}_{timestamp}"
-    folder_path = os.path.join(os.getcwd(), OUTPUT_FOLDER, folder_name)
+    folder_path_obj = ROOT_DIR / OUTPUT_FOLDER / folder_name
     
     # Créer le dossier
-    os.makedirs(folder_path, exist_ok=True)
+    folder_path_obj.mkdir(parents=True, exist_ok=True)
+    folder_path = str(folder_path_obj)  # Convertir en string pour compatibilité
     print(f"   ✓ Dossier créé: {OUTPUT_FOLDER}/{folder_name}/")
     
     # 9. Créer les fichiers LaTeX dans le dossier

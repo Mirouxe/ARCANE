@@ -11,7 +11,7 @@ Modifiez ce fichier pour personnaliser le comportement du système
 #                ⭐ RECOMMANDÉ pour votre usage personnel
 # "generique"  : Parse les compétences de manière dynamique depuis infos_statique.txt
 #                Permet d'utiliser le système pour n'importe quel profil
-MODE_PROFIL = "generique"  # Options : "specifique" ou "generique"
+MODE_PROFIL = "generique"
 
 
 # ==================== MODÈLE IA ====================
