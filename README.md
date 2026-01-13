@@ -1,10 +1,44 @@
 # 🚀 ARCANE - Système Automatique de Génération de CV et Lettres de Motivation
 
-**ARCANE** (Automated Resume and Cover letter ANalysis Engine) est un système intelligent qui automatise la création de CV personnalisés, lettres de motivation et préparation d'entretiens en utilisant l'IA Claude Sonnet 4.5.
+**ARCANE** (Automated Resume and Cover letter ANalysis Engine) est un système intelligent modulaire qui automatise la création de CV personnalisés, lettres de motivation et préparation d'entretiens en utilisant l'IA Claude Sonnet 4.5.
 
 [![Python](https://img.shields.io/badge/Python-3.14+-blue.svg)](https://www.python.org/)
 [![Claude](https://img.shields.io/badge/Claude-Sonnet%204.5-purple.svg)](https://www.anthropic.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Architecture](https://img.shields.io/badge/Architecture-Modulaire-green.svg)](ARCHITECTURE.md)
+
+---
+
+## ✨ Nouveauté : Architecture Modulaire
+
+ARCANE v2 propose une **architecture à modes multiples** :
+
+```
+📂 ARCANE/
+├── core/        # 🎯 Cœur du système (un seul code Python)
+├── templates/   # 📄 Templates LaTeX (CV, lettre)
+└── modes/       # 🎭 6 modes d'utilisation préconfigurés
+```
+
+**Avantages :**
+- ✅ **Un seul code à maintenir** (`core/`)
+- ✅ **6 modes d'utilisation** prêts à l'emploi
+- ✅ **Profils multiples** (spécifique/générique)
+- ✅ **Configurations indépendantes** par mode
+
+📖 **Voir [ARCHITECTURE.md](ARCHITECTURE.md) pour les détails complets**
+
+---
+
+## 🎭 Les 6 Modes Disponibles
+
+| Mode | Usage | Profil |
+|------|-------|--------|
+| **🔍 Recherche Complète Générique** | Recherche + génération multi-offres | Générique (tout métier) |
+| **🔍 Recherche Complète Spécifique** | Recherche + génération multi-offres | Spécifique (votre profil) |
+| **📋 Génération URLs Générique** | Batch depuis liste d'URLs | Générique |
+| **📋 Génération URLs Spécifique** | Batch depuis liste d'URLs | Spécifique |
+| **📄 Génération Simple Générique** | Une seule offre | Générique |
+| **📄 Génération Simple Spécifique** | Une seule offre | Spécifique |
 
 ---
 
@@ -28,6 +62,11 @@
 - ✅ **Styles configurables** : polices, couleurs, puces, marges
 - ✅ **Prompts IA personnalisables** pour chaque section
 - ✅ **Mode candidature spontanée** (analyse site web entreprise)
+
+### 🎭 **Multi-Profils**
+- ✅ **Mode spécifique** : Catégories hardcodées (votre profil)
+- ✅ **Mode générique** : Catégories dynamiques (tout profil)
+- ✅ **Configurations indépendantes** par mode
 
 ---
 
@@ -79,352 +118,219 @@ Téléchargez [MiKTeX](https://miktex.org/)
 ### 5️⃣ **Configurer l'API Claude**
 
 1. Obtenez votre clé API sur [console.anthropic.com](https://console.anthropic.com/)
-2. Copiez le fichier de configuration :
+2. Créez un fichier `.env` :
 ```bash
-cp env.exemple .env
-```
-3. Éditez `.env` et ajoutez votre clé :
-```
-ANTHROPIC_API_KEY=sk-ant-votre-cle-api-ici
+echo "ANTHROPIC_API_KEY=sk-ant-votre-cle-api-ici" > .env
 ```
 
-### 6️⃣ **Configurer vos Informations**
+### 6️⃣ **[Optionnel] Installer Playwright pour WTTJ**
 
 ```bash
-cp infos_statique_exemple.txt infos_statique.txt
-# Éditez infos_statique.txt avec vos vraies informations
-```
-
-### 7️⃣ **[Optionnel] Installer Playwright pour WTTJ**
-
-Si vous voulez scraper Welcome to the Jungle automatiquement :
-```bash
-./installer_playwright.sh
+./documentation/installer_playwright.sh
 ```
 
 ---
 
-## 📖 Utilisation
+## ⚡ Démarrage Rapide
 
-### 🎯 **Cas d'Usage 1: Répondre à une Annonce**
+### Pour Votre Usage Personnel (Profil Spécifique) ⭐
 
 ```bash
-./lancer_generateur.sh "https://www.linkedin.com/jobs/view/123456"
+# Génération simple (une offre)
+cd modes/generation_simple_specifique/
+./lancer.sh https://www.linkedin.com/jobs/view/1234567890
+
+# Génération batch (plusieurs offres)
+cd modes/generation_urls_specifique/
+nano urls.txt  # Ajoutez vos URLs
+./lancer.sh
+
+# Recherche automatique
+cd modes/recherche_complete_specifique/
+./lancer.sh --poste "Ingénieur IA" --localisation "Paris" --auto top5
 ```
 
-**Génère automatiquement:**
-- CV adapté (PDF + LaTeX)
-- Lettre de motivation (PDF + LaTeX)
-- Topo de préparation d'entretien
-- 10 questions techniques avec réponses
-- 5 questions de personnalité avec réponses STAR
+### Pour Aider Quelqu'un (Profil Générique) 🌍
+
+```bash
+cd modes/generation_simple_generique/
+
+# 1. Éditez infos_statique.txt avec les infos de la personne
+nano infos_statique.txt
+
+# 2. Lancez la génération
+./lancer.sh https://job-url
+```
+
+📖 **Voir [DEMARRAGE_RAPIDE.md](DEMARRAGE_RAPIDE.md) pour plus d'exemples**
 
 ---
 
-### 🎯 **Cas d'Usage 2: Candidature Spontanée**
-
-```bash
-./candidature_spontanee.sh "https://www.entreprise.com" "Ingénieur IA"
-```
-
-Analyse le site web de l'entreprise et génère une candidature adaptée.
-
----
-
-### 🎯 **Cas d'Usage 3: Recherche Automatique**
-
-**Recherche simple:**
-```bash
-./recherche_avancee.sh \
-  --poste "Data Scientist" \
-  --localisation "Paris" \
-  --auto top5
-```
-
-**Recherche avec critères:**
-```bash
-./recherche_avancee.sh \
-  --poste "ML Engineer" \
-  --localisation "Remote" \
-  --seniorite "senior" \
-  --domaines "Deep Learning,NLP" \
-  --type "startup" \
-  --auto all
-```
-
-**Options disponibles:**
-- `--poste, -p` : Poste recherché (REQUIS)
-- `--localisation, -l` : Localisation (défaut: France)
-- `--seniorite, -s` : junior | confirmé | senior | lead
-- `--domaines, -d` : Domaines séparés par virgule (ML,IA,NLP)
-- `--type, -t` : startup | PME | grande-entreprise
-- `--nombre, -n` : Nombre d'offres par plateforme (défaut: 10)
-- `--playwright` : Activer Playwright pour WTTJ
-- `--auto, -a` : Sélection automatique (top5 | all | 1,2,3)
-
----
-
-### 🎯 **Cas d'Usage 4: Génération en Batch**
-
-1. Créez un fichier `urls_a_traiter.txt`:
-```
-https://www.linkedin.com/jobs/view/123456
-https://www.welcometothejungle.com/fr/companies/xxx/jobs/yyy
-https://fr.indeed.com/viewjob?jk=abc123
-```
-
-2. Lancez la génération batch:
-```bash
-./batch_urls.sh
-```
-
-Génère automatiquement pour toutes les URLs ! 🚀
-
----
-
-## ⚙️ Configuration
-
-### **Fichier `config.py`**
-
-Tous les paramètres sont centralisés dans `config.py` :
-
-#### **Modèle IA**
-```python
-CLAUDE_MODEL = "claude-sonnet-4-5-20250929"  # Le plus performant
-TEMPERATURE = 0.7  # Créativité (0.0 = déterministe, 1.0 = créatif)
-```
-
-#### **Template CV**
-```python
-CV_TEMPLATE = "2colonnes"  # ou "classique"
-CV_FORMAT = "1page"  # ou "2pages"
-```
-
-#### **Styles**
-```python
-FONT_SIZE_BASE = "10pt"  # 10pt, 11pt, 12pt
-BULLET_STYLE = "bullet"  # bullet, blacksquare, checkmark, etc.
-COLORIZE_MISSION_TITLES = True  # Titres missions en bleu
-```
-
-#### **Nombre de Questions**
-```python
-NB_QUESTIONS_TECHNIQUES = 10
-NB_QUESTIONS_PERSONNALITE = 5
-```
-
-Consultez `config.py` pour la liste complète des options !
-
----
-
-## 📂 Structure des Dossiers
+## 📂 Structure du Projet
 
 ```
 ARCANE/
-├── 📄 Scripts Principaux
-│   ├── generateur_cv_lettre.py      # Moteur principal
-│   ├── recherche_postes.py          # Recherche multi-plateformes
-│   ├── batch_depuis_urls.py         # Génération batch
-│   └── wttj_playwright_scraper.py   # Scraper WTTJ
+├── core/                              # 🎯 Cœur du système
+│   ├── generateur_cv_lettre.py       # Générateur principal
+│   ├── recherche_postes.py            # Recherche multi-plateformes
+│   ├── batch_depuis_urls.py           # Génération batch
+│   ├── wttj_playwright_scraper.py     # Scraper WTTJ
+│   └── config.py                      # Config active
 │
-├── 🔧 Scripts Shell
-│   ├── lancer_generateur.sh         # Générer pour 1 annonce
-│   ├── candidature_spontanee.sh     # Candidature spontanée
-│   ├── recherche_avancee.sh         # Recherche avec critères
-│   ├── rechercher_et_generer.sh     # Mode interactif
-│   ├── batch_urls.sh                # Batch depuis fichier
-│   └── installer_playwright.sh      # Installer Playwright
+├── templates/                         # 📄 Templates LaTeX
+│   ├── cv_template.tex                # CV classique
+│   ├── cv_template_2col.tex           # CV 2 colonnes
+│   └── lettre_motivation_template.tex # Lettre
 │
-├── 📝 Templates LaTeX
-│   ├── cv_template.tex              # CV 1 colonne
-│   ├── cv_template_2col.tex         # CV 2 colonnes
-│   └── lettre_motivation_template.tex
+├── modes/                             # 🎭 6 modes d'utilisation
+│   ├── recherche_complete_generique/
+│   ├── recherche_complete_specifique/
+│   ├── generation_urls_generique/
+│   ├── generation_urls_specifique/
+│   ├── generation_simple_generique/
+│   └── generation_simple_specifique/
 │
-├── ⚙️ Configuration
-│   ├── config.py                    # Configuration centralisée
-│   ├── infos_statique.txt           # Vos informations (PRIVÉ)
-│   ├── infos_statique_exemple.txt   # Exemple
-│   ├── .env                         # Clé API (PRIVÉ)
-│   └── env.exemple                  # Exemple
+├── documentation/                     # 📚 Documentation
+│   ├── GUIDE_MODES.md
+│   ├── GUIDE_UTILISATION.txt
+│   └── installer_playwright.sh
 │
-├── 📚 Documentation
-│   ├── README.md                    # Ce fichier
-│   ├── GUIDE_UTILISATION.txt        # Guide détaillé
-│   ├── EXEMPLES_RECHERCHE.md        # Exemples de recherche
-│   └── STRATEGIES_SCRAPING.md       # Stratégies scraping
-│
-└── 📁 Générés (ignorés par git)
-    └── candidatures/                # Dossiers de candidatures
-        └── Poste_Entreprise_Date/
-            ├── cv.pdf
-            ├── lettre_motivation.pdf
-            ├── preparation_entretien.txt
-            ├── questions_techniques.txt
-            └── questions_personnalite.txt
+├── candidatures/                      # 📦 Résultats générés
+├── venv/                              # 🐍 Environnement Python
+├── .env                               # 🔑 Clé API (ignoré par git)
+├── requirements.txt                   # 📋 Dépendances
+├── README.md                          # 📖 Ce fichier
+├── ARCHITECTURE.md                    # 🏗️ Architecture détaillée
+└── DEMARRAGE_RAPIDE.md               # ⚡ Guide rapide
 ```
 
 ---
 
-## 💰 Coûts API Claude
+## 🔧 Personnalisation
 
-### **Par Candidature** (~0.20€)
-- Analyse annonce: ~0.01€
-- Génération profil: ~0.02€
-- Génération lettre: ~0.03€
-- Topo entretien: ~0.04€
-- Questions techniques: ~0.06€
-- Questions personnalité: ~0.04€
+### Modifier le Template CV
 
-### **Recherche + Batch**
-- Analyse de 30 offres: ~0.05€
-- Génération de 5 candidatures: ~1.00€
+Chaque mode a son propre `config.py` :
 
-**Total ~1.05€ pour une session complète** (recherche + 5 candidatures)
+```bash
+cd modes/generation_simple_specifique/
+nano config.py
+```
 
----
-
-## 🎨 Exemples de Résultats
-
-### **Templates CV Disponibles**
-
-**1. Classique (1 colonne)**
-- Format traditionnel
-- Lecture linéaire
-- Idéal pour recruteurs conservateurs
-
-**2. Moderne (2 colonnes)**
-- Style journal scientifique
-- Gain de place
-- Aspect visuel moderne
-
-### **Personnalisation**
-
-Changez le style de puces en 1 ligne dans `config.py`:
 ```python
-BULLET_STYLE = "blacksquare"  # ■
-BULLET_STYLE = "bullet"       # •
-BULLET_STYLE = "checkmark"    # ✓
+# Changer le template
+CV_TEMPLATE = "classique"  # ou "2colonnes"
+
+# Changer le format
+CV_FORMAT = "2pages"  # ou "1page"
+
+# Changer les bullets
+BULLET_STYLE = "blacksquare"  # ou "bullet", "diamond", etc.
+```
+
+### Modifier le Code Source
+
+Le code est dans `core/` :
+
+```bash
+cd core/
+nano generateur_cv_lettre.py
+```
+
+**⚠️ Important :** Les modifications dans `core/` affectent **tous les modes** !
+
+---
+
+## 📊 Exemple de Résultat
+
+Pour chaque candidature, ARCANE génère :
+
+```
+candidatures/Ingenieur_IA_TechCorp_20260113/
+├── cv.pdf                        # CV personnalisé (1-2 pages)
+├── lettre_motivation.pdf         # Lettre ciblée
+├── preparation_entretien.txt     # Topo stratégique du poste
+├── questions_techniques.txt      # 10 questions tech + réponses
+└── questions_personnalite.txt    # 5 questions comportementales STAR
 ```
 
 ---
 
-## 🔍 Plateformes Supportées
+## 🎓 Documentation Complète
 
-| Plateforme | Status | Vitesse | Qualité Offres |
-|------------|--------|---------|----------------|
-| **LinkedIn** | ✅ Excellent | ⚡⚡⚡ | ⭐⭐⭐⭐⭐ |
-| **Indeed** | ⚠️ Bloqué souvent | ⚡⚡⚡ | ⭐⭐⭐ |
-| **WTTJ** (Playwright) | ✅ Excellent | ⚡ | ⭐⭐⭐⭐⭐ |
-| **Apec** | ⚠️ Limité | ⚡⚡ | ⭐⭐⭐⭐ |
-| **Batch URLs** | ✅ Parfait | ⚡ | ⭐⭐⭐⭐⭐ |
-
-**Recommandation:** LinkedIn + Batch URLs pour meilleure fiabilité
+| Document | Description |
+|----------|-------------|
+| [README.md](README.md) | Ce fichier - Vue d'ensemble |
+| [DEMARRAGE_RAPIDE.md](DEMARRAGE_RAPIDE.md) | Guide de démarrage rapide |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Architecture détaillée du système |
+| [documentation/GUIDE_MODES.md](documentation/GUIDE_MODES.md) | Guide des modes spécifique/générique |
+| [modes/*/README.md](modes/) | Documentation de chaque mode |
 
 ---
 
-## 🛠️ Dépannage
+## 💡 Cas d'Usage
 
-### **Problème: ANTHROPIC_API_KEY non définie**
+### Scénario 1 : Génération rapide pour vous
 ```bash
-# Vérifiez votre fichier .env
-cat .env
-# Doit contenir: ANTHROPIC_API_KEY=sk-ant-...
+cd modes/generation_simple_specifique/
+./lancer.sh https://job-url
 ```
 
-### **Problème: pdflatex not found**
+### Scénario 2 : Recherche pour un ami développeur
 ```bash
-# macOS
-brew install --cask mactex
-
-# Linux
-sudo apt-get install texlive-full
+cd modes/recherche_complete_generique/
+nano infos_statique.txt  # Ajustez avec ses infos
+./lancer.sh --poste "Développeur React" --localisation "Paris" --auto top5
 ```
 
-### **Problème: Aucune offre trouvée**
-- Simplifiez les critères de recherche
-- Utilisez --auto top5 pour éviter les blocages
-- Ou utilisez le mode batch avec URLs directes
-
-### **Problème: WTTJ ne trouve rien**
+### Scénario 3 : Batch de 20 offres
 ```bash
-# Installez Playwright
-./installer_playwright.sh
-
-# Puis utilisez --playwright
-./recherche_avancee.sh -p "Data Scientist" --playwright
+cd modes/generation_urls_specifique/
+nano urls.txt  # Ajoutez 20 URLs
+./lancer.sh
 ```
 
 ---
 
-## 📊 Workflow Recommandé
+## 🛠️ Technologies Utilisées
 
-### **Pour une Candidature Rapide** (5 minutes)
-```bash
-./lancer_generateur.sh "https://linkedin.com/jobs/view/123456"
-```
-
-### **Pour une Recherche Approfondie** (30 minutes)
-```bash
-# 1. Recherche automatique
-./recherche_avancee.sh -p "Data Scientist" -l "Paris" --auto top5
-
-# 2. Revue des CVs générés
-open candidatures/*/cv.pdf
-
-# 3. Personnalisation si nécessaire
-code candidatures/Poste_Entreprise_Date/cv.tex
-```
-
-### **Pour Candidatures Multiples** (1 heure)
-```bash
-# 1. Recherchez manuellement sur LinkedIn, WTTJ
-# 2. Copiez les URLs dans urls_a_traiter.txt
-# 3. Lancez le batch
-./batch_urls.sh
-```
+- **Python 3.14** - Langage principal
+- **Claude Sonnet 4.5** - Modèle IA pour génération
+- **LaTeX** - Génération de PDF professionnels
+- **BeautifulSoup** - Scraping web
+- **Playwright** - Scraping dynamique (WTTJ)
+- **Bash** - Scripts d'orchestration
 
 ---
 
-## 🤝 Contribution
+## 📝 Licence
+
+MIT License - Voir [LICENSE](LICENSE)
+
+---
+
+## 🤝 Contributions
 
 Les contributions sont les bienvenues ! N'hésitez pas à :
 - 🐛 Signaler des bugs
-- 💡 Proposer des améliorations
-- 📝 Améliorer la documentation
-- 🔧 Ajouter de nouvelles fonctionnalités
+- 💡 Proposer des fonctionnalités
+- 📖 Améliorer la documentation
+- 🔧 Soumettre des pull requests
 
 ---
 
-## 📄 License
+## 📧 Contact
 
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
-
----
-
-## 🙏 Remerciements
-
-- **Anthropic** pour Claude Sonnet 4.5
-- **LaTeX** pour le rendu professionnel des documents
-- **Playwright** pour le scraping moderne
+**Maxime Miroux**  
+GitHub: [@Mirouxe](https://github.com/Mirouxe)  
+Repository: [ARCANE](https://github.com/Mirouxe/ARCANE)
 
 ---
 
-## 📬 Contact
+## ⭐ Support
 
-Pour toute question ou suggestion, ouvrez une **issue** sur GitHub.
-
----
-
-**⭐ Si ce projet vous est utile, n'hésitez pas à lui donner une étoile !**
+Si vous trouvez ARCANE utile, n'hésitez pas à mettre une étoile ⭐ sur le repository !
 
 ---
 
-## 🔐 Sécurité
-
-- ⚠️ Ne commitez **JAMAIS** votre `.env` ou `infos_statique.txt`
-- ⚠️ Ajoutez toujours `candidatures/` au `.gitignore`
-- ⚠️ Ne partagez jamais votre clé API publiquement
-
----
-
-Made with ❤️ by [Mirouxe](https://github.com/Mirouxe)
+**🚀 ARCANE : Un cœur, plusieurs visages. Automatisez vos candidatures !**

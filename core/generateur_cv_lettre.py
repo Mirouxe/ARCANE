@@ -15,7 +15,7 @@ import requests
 from bs4 import BeautifulSoup
 from anthropic import Anthropic
 from dotenv import load_dotenv
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 # Charger les variables d'environnement depuis .env
 load_dotenv()
@@ -38,11 +38,15 @@ class InfosPersonnelles:
     formations: List[Dict]
     certifications: List[Dict]
     projets: List[Dict]
-    competences_scientific_ai: str
-    competences_simulation: str
-    competences_generative_ai: str
-    competences_informatique: str
     langues: List[Dict]
+    # Compétences - deux modes possibles :
+    # Mode specifique : champs individuels (pour compatibilité)
+    competences_scientific_ai: str = ""
+    competences_simulation: str = ""
+    competences_generative_ai: str = ""
+    competences_informatique: str = ""
+    # Mode generique : liste de dictionnaires {categorie: str, contenu: str}
+    competences: List[Dict] = field(default_factory=list)
 
 
 class ParseurInfosStatiques:
@@ -63,11 +67,23 @@ class ParseurInfosStatiques:
             'linkedin': ParseurInfosStatiques._extract('linkedin:', content),
             'telephone': ParseurInfosStatiques._extract('telephone:', content),
             'profil_defaut': ParseurInfosStatiques._extract_multiline('profil_defaut:', content),
-            'competences_scientific_ai': ParseurInfosStatiques._extract_multiline('competences_scientific_ai:', content),
-            'competences_simulation': ParseurInfosStatiques._extract_multiline('competences_simulation:', content),
-            'competences_generative_ai': ParseurInfosStatiques._extract_multiline('competences_generative_ai:', content),
-            'competences_informatique': ParseurInfosStatiques._extract_multiline('competences_informatique:', content),
         }
+        
+        # Parser les compétences selon le mode (specifique ou generique)
+        if MODE_PROFIL == "specifique":
+            # Mode spécifique : catégories hardcodées
+            data['competences_scientific_ai'] = ParseurInfosStatiques._extract_multiline('competences_scientific_ai:', content)
+            data['competences_simulation'] = ParseurInfosStatiques._extract_multiline('competences_simulation:', content)
+            data['competences_generative_ai'] = ParseurInfosStatiques._extract_multiline('competences_generative_ai:', content)
+            data['competences_informatique'] = ParseurInfosStatiques._extract_multiline('competences_informatique:', content)
+            data['competences'] = []
+        else:
+            # Mode générique : parse les catégories dynamiquement
+            data['competences'] = ParseurInfosStatiques._parse_competences_generique(content)
+            data['competences_scientific_ai'] = ""
+            data['competences_simulation'] = ""
+            data['competences_generative_ai'] = ""
+            data['competences_informatique'] = ""
         
         # Pour simplifier, on parse les sections complexes manuellement
         # (Dans une version production, utiliser un vrai parser TOML/YAML)
@@ -191,6 +207,29 @@ class ParseurInfosStatiques:
             langues.append(lang)
         
         return langues
+    
+    @staticmethod
+    def _parse_competences_generique(content: str) -> List[Dict]:
+        """Parse les compétences en mode générique (pour tout type de profil)"""
+        competences = []
+        # Chercher la section COMPÉTENCES
+        sections = re.findall(r'\[\[competence\]\](.+?)(?=\[\[|# LANGUES|$)', content, re.DOTALL)
+        
+        for section in sections:
+            categorie = ParseurInfosStatiques._extract('categorie:', section)
+            contenu = ParseurInfosStatiques._extract_multiline('contenu:', section)
+            # Si contenu n'est pas multiligne, essayer extraction simple
+            if not contenu:
+                contenu = ParseurInfosStatiques._extract('contenu:', section)
+            
+            if categorie and contenu:
+                comp = {
+                    'categorie': categorie,
+                    'contenu': contenu
+                }
+                competences.append(comp)
+        
+        return competences
 
 
 class ScraperAnnonce:
@@ -328,17 +367,23 @@ class GenerateurIA:
                 for mission in exp['missions'][:3]:
                     experiences_resume += f"  • {mission}\n"
         
-        # Préparer un résumé des compétences
+        # Préparer un résumé des compétences (selon le mode)
         competences_techniques = ""
         if infos:
-            if infos.competences_scientific_ai:
-                competences_techniques += f"Scientific AI: {infos.competences_scientific_ai.strip()}\n"
-            if infos.competences_simulation:
-                competences_techniques += f"Simulation: {infos.competences_simulation.strip()}\n"
-            if infos.competences_generative_ai:
-                competences_techniques += f"Generative AI: {infos.competences_generative_ai.strip()}\n"
-            if infos.competences_informatique:
-                competences_techniques += f"Informatique: {infos.competences_informatique.strip()}\n"
+            if MODE_PROFIL == "specifique":
+                # Mode spécifique : catégories hardcodées
+                if infos.competences_scientific_ai:
+                    competences_techniques += f"Scientific AI: {infos.competences_scientific_ai.strip()}\n"
+                if infos.competences_simulation:
+                    competences_techniques += f"Simulation: {infos.competences_simulation.strip()}\n"
+                if infos.competences_generative_ai:
+                    competences_techniques += f"Generative AI: {infos.competences_generative_ai.strip()}\n"
+                if infos.competences_informatique:
+                    competences_techniques += f"Informatique: {infos.competences_informatique.strip()}\n"
+            else:
+                # Mode générique : catégories dynamiques
+                for comp in infos.competences:
+                    competences_techniques += f"{comp['categorie']}: {comp['contenu']}\n"
         
         prompt = PROMPT_TEMPLATE_PROFIL.format(
             profil_base=profil_base,
@@ -373,17 +418,23 @@ class GenerateurIA:
                 for mission in exp['missions'][:3]:
                     experiences_resume += f"  • {mission}\n"
         
-        # Préparer un résumé des compétences
+        # Préparer un résumé des compétences (selon le mode)
         competences_techniques = ""
         if infos:
-            if infos.competences_scientific_ai:
-                competences_techniques += f"Scientific AI: {infos.competences_scientific_ai.strip()}\n"
-            if infos.competences_simulation:
-                competences_techniques += f"Simulation: {infos.competences_simulation.strip()}\n"
-            if infos.competences_generative_ai:
-                competences_techniques += f"Generative AI: {infos.competences_generative_ai.strip()}\n"
-            if infos.competences_informatique:
-                competences_techniques += f"Informatique: {infos.competences_informatique.strip()}\n"
+            if MODE_PROFIL == "specifique":
+                # Mode spécifique : catégories hardcodées
+                if infos.competences_scientific_ai:
+                    competences_techniques += f"Scientific AI: {infos.competences_scientific_ai.strip()}\n"
+                if infos.competences_simulation:
+                    competences_techniques += f"Simulation: {infos.competences_simulation.strip()}\n"
+                if infos.competences_generative_ai:
+                    competences_techniques += f"Generative AI: {infos.competences_generative_ai.strip()}\n"
+                if infos.competences_informatique:
+                    competences_techniques += f"Informatique: {infos.competences_informatique.strip()}\n"
+            else:
+                # Mode générique : catégories dynamiques
+                for comp in infos.competences:
+                    competences_techniques += f"{comp['categorie']}: {comp['contenu']}\n"
         
         prompt = PROMPT_TEMPLATE_PROFIL_SPONTANEE.format(
             profil_base=profil_base,
@@ -708,6 +759,14 @@ class GenerateurLaTeX:
         projets_tex = GenerateurLaTeX._generer_projets(infos.projets, vspace_proj)
         langues_tex = GenerateurLaTeX._generer_langues(infos.langues)
         
+        # Générer la section compétences selon le mode
+        if MODE_PROFIL == "specifique":
+            # Mode spécifique : utiliser les champs hardcodés
+            competences_section = GenerateurLaTeX._generer_competences_specifique(infos)
+        else:
+            # Mode générique : utiliser la liste de compétences dynamique
+            competences_section = GenerateurLaTeX._generer_competences_generique(infos.competences)
+        
         # Remplacer les placeholders (en échappant les caractères spéciaux LaTeX)
         telephone = infos.telephone if infos.telephone and infos.telephone.strip() else '+33 X XX XX XX XX'
         replacements = {
@@ -727,6 +786,7 @@ class GenerateurLaTeX:
             '{COMPETENCES_SIMULATION}': GenerateurLaTeX.escape_latex(infos.competences_simulation),
             '{COMPETENCES_GENERATIVE_AI}': GenerateurLaTeX.escape_latex(infos.competences_generative_ai),
             '{COMPETENCES_INFORMATIQUE}': GenerateurLaTeX.escape_latex(infos.competences_informatique),
+            '{COMPETENCES_SECTION}': competences_section,  # Section complète pour mode générique
             '{LANGUES}': langues_tex,
         }
         
@@ -869,6 +929,33 @@ class GenerateurLaTeX:
                 niveau = GenerateurLaTeX.escape_latex(lang['niveau'])
                 tex += f"{langue} : {niveau} \\\\\n"
             return tex
+    
+    @staticmethod
+    def _generer_competences_specifique(infos: InfosPersonnelles) -> str:
+        """Génère la section compétences en mode spécifique (catégories hardcodées)"""
+        # Cette section sera remplacée directement dans le template
+        # via les placeholders individuels
+        return ""
+    
+    @staticmethod
+    def _generer_competences_generique(competences: List[Dict]) -> str:
+        """Génère la section compétences en mode générique (catégories dynamiques)"""
+        if not competences:
+            return "\\textit{Aucune compétence listée}"
+        
+        tex = ""
+        for i, comp in enumerate(competences):
+            categorie = GenerateurLaTeX.escape_latex(comp['categorie'])
+            contenu = GenerateurLaTeX.escape_latex(comp['contenu'])
+            
+            if CV_TEMPLATE == "2colonnes":
+                # Format compact pour 2 colonnes
+                tex += f"\\skillgroup{{{categorie}}}{{{contenu}}}\n"
+            else:
+                # Format classique
+                tex += f"\\textbf{{{categorie} :}}\n{contenu}\n\n"
+        
+        return tex
 
 
 class CompillateurPDF:

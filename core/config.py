@@ -4,6 +4,16 @@ Configuration centralisée du générateur CV/Lettre
 Modifiez ce fichier pour personnaliser le comportement du système
 """
 
+# ==================== MODE DE PROFIL ====================
+# Mode de traitement des compétences et du profil
+# "specifique" : Utilise les catégories hardcodées spécifiques à votre profil
+#                (Scientific AI, Simulation, Generative AI, Informatique)
+#                ⭐ RECOMMANDÉ pour votre usage personnel
+# "generique"  : Parse les compétences de manière dynamique depuis infos_statique.txt
+#                Permet d'utiliser le système pour n'importe quel profil
+MODE_PROFIL = "generique"  # Options : "specifique" ou "generique"
+
+
 # ==================== MODÈLE IA ====================
 # Modèle Claude (Anthropic) à utiliser pour la génération
 # Options disponibles (du plus avancé au plus économique) :

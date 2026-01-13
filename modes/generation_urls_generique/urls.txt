@@ -1,0 +1,10 @@
+# Liste d'URLs d'annonces d'emploi à traiter
+# Une URL par ligne
+# Les lignes commençant par # sont des commentaires
+
+# Exemples:
+# https://www.linkedin.com/jobs/view/1234567890
+# https://www.welcometothejungle.com/fr/companies/company-name/jobs/job-slug
+# https://www.indeed.fr/viewjob?jk=abc123def456
+
+# Ajoutez vos URLs ci-dessous:
