@@ -144,16 +144,8 @@ echo ""
 cd "$ROOT_DIR"
 
 if [ "$AUTO_SELECTION" = "interactif" ]; then
-    # Mode interactif - laisser le script Python gérer les prompts
-    python3 "$CORE_DIR/recherche_postes.py" <<EOF
-$POSTE
-$LOCALISATION
-$SENIORITE_NUM
-$DOMAINES
-$TYPE_NUM
-$NB_JOBS
-$USE_PLAYWRIGHT
-EOF
+    # Mode interactif - fournir les paramètres initiaux, puis laisser stdin ouvert pour la sélection
+    (printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n" "$POSTE" "$LOCALISATION" "$SENIORITE_NUM" "$DOMAINES" "$TYPE_NUM" "$NB_JOBS" "$USE_PLAYWRIGHT"; cat) | python3 "$CORE_DIR/recherche_postes.py"
 else
     # Mode automatique
     echo "$POSTE
