@@ -12,20 +12,30 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 CORE_DIR="$ROOT_DIR/core"
 
-# Vérifier qu'une URL est fournie
-if [ $# -eq 0 ]; then
-    echo "❌ Erreur: Veuillez fournir l'URL de l'annonce"
+# Si une URL est fournie en argument, l'utiliser directement
+if [ $# -gt 0 ]; then
+    URL="$1"
+else
+    # Sinon, mode interactif
+    echo "📝 Veuillez fournir l'URL de l'annonce d'emploi"
     echo ""
-    echo "Usage: ./lancer.sh <URL_ANNONCE>"
+    echo "Exemples d'URLs valides:"
+    echo "  • https://www.linkedin.com/jobs/view/1234567890"
+    echo "  • https://www.welcometothejungle.com/fr/companies/..."
+    echo "  • https://entreprise.com/carriere/poste"
     echo ""
-    echo "Exemple:"
-    echo "  ./lancer.sh https://www.linkedin.com/jobs/view/1234567890"
-    echo ""
-    exit 1
+    read -p "🔗 URL de l'annonce : " URL
+    
+    # Vérifier que l'URL n'est pas vide
+    if [ -z "$URL" ]; then
+        echo ""
+        echo "❌ Erreur: URL vide"
+        exit 1
+    fi
 fi
 
-URL="$1"
-echo "🔗 URL: $URL"
+echo ""
+echo "🔗 URL sélectionnée: $URL"
 echo ""
 
 # Copier le config local et les infos dans le root

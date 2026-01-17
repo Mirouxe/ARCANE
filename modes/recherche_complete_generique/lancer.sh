@@ -19,110 +19,143 @@ cp "$SCRIPT_DIR/infos_statique.txt" "$ROOT_DIR/infos_statique.txt"
 # Activer l'environnement virtuel
 source "$ROOT_DIR/venv/bin/activate"
 
-# Parser les arguments
-POSTE=""
-LOCALISATION="France"
-SENIORITE=""
-DOMAINES=""
-TYPE_ENTREPRISE=""
-NB_JOBS="10"
-USE_PLAYWRIGHT="non"
-AUTO_SELECTION="non"
-
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        --poste|-p)
-            POSTE="$2"
-            shift 2
-            ;;
-        --localisation|-l|--location)
-            LOCALISATION="$2"
-            shift 2
-            ;;
-        --seniorite|-s|--seniority)
-            SENIORITE="$2"
-            shift 2
-            ;;
-        --domaines|-d|--domains)
-            DOMAINES="$2"
-            shift 2
-            ;;
-        --type|-t|--type-entreprise)
-            TYPE_ENTREPRISE="$2"
-            shift 2
-            ;;
-        --nombre|-n|--nb)
-            NB_JOBS="$2"
-            shift 2
-            ;;
-        --playwright)
-            USE_PLAYWRIGHT="oui"
-            shift
-            ;;
-        --auto|-a)
-            AUTO_SELECTION="$2"
-            shift 2
-            ;;
-        -h|--help)
-            echo "Usage: ./lancer.sh [OPTIONS]"
-            echo ""
-            echo "Options:"
-            echo "  --poste, -p           Poste recherché (REQUIS)"
-            echo "  --localisation, -l    Localisation (défaut: France)"
-            echo "  --seniorite, -s       Niveau: junior|confirmé|senior|lead"
-            echo "  --domaines, -d        Domaines séparés par virgule"
-            echo "  --type, -t            Type: startup|PME|grande-entreprise"
-            echo "  --nombre, -n          Nombre d'offres (défaut: 10)"
-            echo "  --playwright          Activer Playwright pour WTTJ"
-            echo "  --auto, -a            Sélection auto: top5|all|1,2,3"
-            echo ""
-            exit 0
-            ;;
-        *)
-            echo "Option inconnue: $1"
-            exit 1
-            ;;
-    esac
-done
-
-# Vérifier que le poste est fourni
-if [ -z "$POSTE" ]; then
-    echo "❌ Erreur: Le poste est requis"
-    echo "Usage: ./lancer.sh --poste 'Développeur Full-Stack' [OPTIONS]"
-    exit 1
-fi
-
-# Mapper les valeurs pour le script Python
-SENIORITE_NUM=""
-case "$SENIORITE" in
-    junior|débutant) SENIORITE_NUM="1" ;;
-    confirmé|intermédiaire) SENIORITE_NUM="2" ;;
-    senior|expert) SENIORITE_NUM="3" ;;
-    lead|manager) SENIORITE_NUM="4" ;;
-    *) SENIORITE_NUM="5" ;;
-esac
-
-TYPE_NUM=""
-case "$TYPE_ENTREPRISE" in
-    startup) TYPE_NUM="1" ;;
-    pme|PME|ETI) TYPE_NUM="2" ;;
-    grande-entreprise|grande) TYPE_NUM="3" ;;
-    *) TYPE_NUM="4" ;;
-esac
-
-# Afficher les critères
-echo "Critères de recherche:"
-echo "  🎯 Poste: $POSTE"
-echo "  📍 Localisation: $LOCALISATION"
-[ -n "$SENIORITE" ] && echo "  💼 Séniorité: $SENIORITE"
-[ -n "$DOMAINES" ] && echo "  🔬 Domaines: $DOMAINES"
-[ -n "$TYPE_ENTREPRISE" ] && echo "  🏢 Type: $TYPE_ENTREPRISE"
-echo "  📊 Nombre: $NB_JOBS par plateforme"
+# Mode interactif complet
+echo "🔍 CONFIGURATION DE LA RECHERCHE"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
+# 1. Poste recherché
+read -p "🎯 Poste recherché (ex: Community Manager, Social Media Manager) : " POSTE
+if [ -z "$POSTE" ]; then
+    echo "❌ Erreur: Le poste est requis"
+    exit 1
+fi
+echo ""
+
+# 2. Localisation
+read -p "📍 Localisation (ex: Paris, Annecy, Remote) [défaut: France] : " LOCALISATION
+LOCALISATION=${LOCALISATION:-France}
+echo ""
+
+# 3. Séniorité
+echo "💼 Niveau de séniorité :"
+echo "  1) Junior / Débutant"
+echo "  2) Confirmé / Intermédiaire"
+echo "  3) Senior / Expert"
+echo "  4) Lead / Manager"
+echo "  5) Tous niveaux (recommandé)"
+echo ""
+read -p "Votre choix (1-5) [défaut: 5] : " SENIORITE_NUM
+SENIORITE_NUM=${SENIORITE_NUM:-5}
+echo ""
+
+# 4. Domaines d'expertise
+echo "🔬 Domaines d'expertise (optionnel)"
+echo "   Séparez les domaines par des virgules"
+echo "   Ex: Social Media,Content Marketing,Community Management"
+echo ""
+read -p "Domaines : " DOMAINES
+echo ""
+
+# 5. Type d'entreprise
+echo "🏢 Type d'entreprise :"
+echo "  1) Startup"
+echo "  2) PME / ETI"
+echo "  3) Grande entreprise / CAC40"
+echo "  4) Tous types (recommandé)"
+echo ""
+read -p "Votre choix (1-4) [défaut: 4] : " TYPE_NUM
+TYPE_NUM=${TYPE_NUM:-4}
+echo ""
+
+# 6. Nombre de postes
+read -p "📊 Nombre de postes par plateforme [défaut: 10] : " NB_JOBS
+NB_JOBS=${NB_JOBS:-10}
+echo ""
+
+# 7. Playwright pour WTTJ
+echo "🚀 Activer Playwright pour Welcome To The Jungle ?"
+echo "   (Permet de scraper plus d'offres, mais plus lent)"
+echo ""
+read -p "Activer ? (oui/non) [défaut: non] : " USE_PLAYWRIGHT_INPUT
+if [ "$USE_PLAYWRIGHT_INPUT" = "oui" ] || [ "$USE_PLAYWRIGHT_INPUT" = "o" ] || [ "$USE_PLAYWRIGHT_INPUT" = "yes" ] || [ "$USE_PLAYWRIGHT_INPUT" = "y" ]; then
+    USE_PLAYWRIGHT="oui"
+else
+    USE_PLAYWRIGHT="non"
+fi
+echo ""
+
+# 8. Mode de sélection
+echo "🎯 Mode de sélection des offres :"
+echo "  1) Interactif (sélection manuelle après recherche)"
+echo "  2) Automatique - Top 5 (5 meilleures offres)"
+echo "  3) Automatique - Toutes les offres"
+echo "  4) Automatique - Liste personnalisée (ex: 1,3,5,7)"
+echo ""
+read -p "Votre choix (1-4) [défaut: 1] : " SELECTION_MODE
+SELECTION_MODE=${SELECTION_MODE:-1}
+
+case "$SELECTION_MODE" in
+    1)
+        AUTO_SELECTION="interactif"
+        ;;
+    2)
+        AUTO_SELECTION="top5"
+        ;;
+    3)
+        AUTO_SELECTION="all"
+        ;;
+    4)
+        echo ""
+        read -p "📝 Liste des numéros (ex: 1,3,5) : " AUTO_SELECTION
+        ;;
+    *)
+        AUTO_SELECTION="interactif"
+        ;;
+esac
+
+# Afficher le récapitulatif
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📋 RÉCAPITULATIF DE LA RECHERCHE"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  🎯 Poste: $POSTE"
+echo "  📍 Localisation: $LOCALISATION"
+echo "  💼 Séniorité: Niveau $SENIORITE_NUM"
+[ -n "$DOMAINES" ] && echo "  🔬 Domaines: $DOMAINES"
+echo "  🏢 Type entreprise: Option $TYPE_NUM"
+echo "  📊 Nombre: $NB_JOBS postes par plateforme"
+echo "  🚀 Playwright: $USE_PLAYWRIGHT"
+echo "  🎯 Sélection: $AUTO_SELECTION"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+read -p "▶️  Lancer la recherche ? (oui/non) : " CONFIRM
+
+if [ "$CONFIRM" != "oui" ] && [ "$CONFIRM" != "o" ] && [ "$CONFIRM" != "yes" ] && [ "$CONFIRM" != "y" ]; then
+    echo ""
+    echo "❌ Annulé"
+    exit 0
+fi
+
 # Lancer la recherche
+echo ""
+echo "🔍 Lancement de la recherche..."
+echo ""
 cd "$ROOT_DIR"
-if [ "$AUTO_SELECTION" != "non" ]; then
+
+if [ "$AUTO_SELECTION" = "interactif" ]; then
+    # Mode interactif - laisser le script Python gérer les prompts
+    python3 "$CORE_DIR/recherche_postes.py" <<EOF
+$POSTE
+$LOCALISATION
+$SENIORITE_NUM
+$DOMAINES
+$TYPE_NUM
+$NB_JOBS
+$USE_PLAYWRIGHT
+EOF
+else
+    # Mode automatique
     echo "$POSTE
 $LOCALISATION
 $SENIORITE_NUM
@@ -132,7 +165,4 @@ $NB_JOBS
 $USE_PLAYWRIGHT
 $AUTO_SELECTION
 oui" | python3 "$CORE_DIR/recherche_postes.py"
-else
-    echo "⚠️  Pour mode automatique, utilisez --auto top5|all|1,2,3"
-    exit 1
 fi

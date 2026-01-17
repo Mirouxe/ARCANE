@@ -40,6 +40,23 @@ ARCANE v2 propose une **architecture à modes multiples** :
 | **📄 Génération Simple Générique** | Une seule offre | Générique |
 | **📄 Génération Simple Spécifique** | Une seule offre | Spécifique |
 
+### 🎯 Mode Interactif (Nouveau !)
+
+**Tous les modes sont maintenant 100% interactifs !** Plus besoin de mémoriser les arguments en ligne de commande.
+
+```bash
+cd modes/generation_simple_specifique/
+./lancer.sh
+# ✨ Le script vous guide étape par étape !
+```
+
+**Ce qui vous sera demandé selon le mode :**
+- 📄 **Génération Simple** : URL de l'annonce
+- 📋 **Génération URLs** : Source des URLs (fichier, manuel, personnalisé)
+- 🔍 **Recherche Complète** : 8 paramètres (poste, localisation, séniorité, etc.)
+
+📖 **Voir [GUIDE_INTERACTIF.md](documentation/GUIDE_INTERACTIF.md) pour tous les détails**
+
 ---
 
 ## ✨ Fonctionnalités
